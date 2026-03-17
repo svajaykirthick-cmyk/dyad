@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useSettings } from "@/hooks/useSettings";
 import { showSuccess, showError } from "@/lib/toast";
 
@@ -8,6 +9,30 @@ export function VercelIntegration() {
   const { t } = useTranslation(["home", "common"]);
   const { settings, updateSettings } = useSettings();
   const [isDisconnecting, setIsDisconnecting] = useState(false);
+  const [accessToken, setAccessToken] = useState("");
+  const [isConnecting, setIsConnecting] = useState(false);
+
+  const handleConnectToVercel = async () => {
+    if (!accessToken.trim()) return;
+    setIsConnecting(true);
+    try {
+      const result = await updateSettings({
+        vercelAccessToken: {
+          value: accessToken.trim(),
+        },
+      });
+      if (result) {
+        showSuccess(t("integrations.vercel.connected"));
+        setAccessToken("");
+      } else {
+        showError(t("integrations.vercel.failedConnect"));
+      }
+    } catch (err: any) {
+      showError(err.message || t("integrations.vercel.errorConnect"));
+    } finally {
+      setIsConnecting(false);
+    }
+  };
 
   const handleDisconnectFromVercel = async () => {
     setIsDisconnecting(true);
@@ -30,7 +55,46 @@ export function VercelIntegration() {
   const isConnected = !!settings?.vercelAccessToken;
 
   if (!isConnected) {
-    return null;
+    return (
+      <div className="space-y-4">
+        <div>
+          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {t("integrations.vercel.title")}
+          </h3>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Connect your Vercel account to enable one-click deployments.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Input
+            type="password"
+            placeholder="Vercel Access Token"
+            value={accessToken}
+            onChange={(e) => setAccessToken(e.target.value)}
+            className="flex-grow"
+          />
+          <Button
+            onClick={handleConnectToVercel}
+            disabled={isConnecting || !accessToken.trim()}
+            size="sm"
+          >
+            {isConnecting ? t("common:connecting") : t("common:connect")}
+          </Button>
+        </div>
+        <p className="text-[10px] text-gray-400">
+          You can create a token in your{" "}
+          <a
+            href="https://vercel.com/account/tokens"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:underline"
+          >
+            Vercel settings
+          </a>
+          .
+        </p>
+      </div>
+    );
   }
 
   return (

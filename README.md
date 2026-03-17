@@ -32,3 +32,18 @@ If you're interested in contributing to dyad, please read our [contributing](./C
 
 - All the code in this repo outside of `src/pro` is open-source and licensed under Apache 2.0 - see [LICENSE](./LICENSE).
 - All the code in this repo within `src/pro` is fair-source and licensed under [Functional Source License 1.1 Apache 2.0](https://fsl.software/) - see [LICENSE](./src/pro/LICENSE).
+
+## 🌐 Vercel Deployment
+
+This project is configured for easy deployment to Vercel.
+
+### How to Deploy
+
+1.  **Push your changes** to your GitHub repository.
+2.  **Connect to Vercel**:
+    *   Go to [Vercel](https://vercel.com/) and create a new project.
+    *   Import your GitHub repository.
+    *   Vercel will automatically detect the Vite framework.
+    *   Click **Deploy**.
+
+The project includes a `vercel.json` configuration to handle client-side routing and Vite build settings.
